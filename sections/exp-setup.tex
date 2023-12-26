@@ -1,0 +1,58 @@
+\section{Experimental Setup}
+\label{sec:exp-setup}
+
+\subsection{Hardware configuration}
+\begin{table}[t]
+    \centering
+    \caption{The hardware configuration of our testbed}
+    \begin{adjustbox}{width=248pt}
+    \begin{tabular}{l|lll}
+    \toprule
+    Type                      &  Our GPU cluster        & Azure Cloud HC           \\
+    \midrule
+    Number of nodes          & 2                        & 8                       \\
+    CPU model                 & AMC EPYC 7763           & Intel Xeon Platinum 8168 \\
+    CPU architecture          & Milan                  & Skylake                  \\
+    CPU frequency             & 2.45GHz                 & 3.4 GHz                  \\
+    Cores per CPU             & 64                      & 22                       \\
+    Number of CPU per node    & 2                       & 2                        \\
+    L1d/i cache per core      & 32 KiB                  & 32 KiB                   \\
+    L2 cache per core         & 512KiB                  & 1 MiB                    \\
+    L3 cache              & 256 MiB                & 33 MiB                   \\
+    GPU model                 & NVIDIA A100*4           & -                        \\
+    Interconnection bandwidth & 200 Gb/s                & 100 Gb/s                 \\
+    \midrule
+    Operating system environment & Bare-metal & Virtual machine\\
+    \midrule
+    Experiments performed     & GPU                     & CPU and distributed \\
+    \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+    \label{table:hardware}
+\end{table}
+
+Our experimental environment consists of two GPU nodes and a eight-node Azure cluster (HB44rs). Table~\ref{table:hardware} summarizes the hardware configurations used in our experiments.
+
+The GPU cluster comprises two QuantaGrid D43N-3U nodes. Each node is equipped with two AMD EPYC "Milan" 7763 64-core processors, with hyperthreading enabled, resulting in a total of 128 cores per node. Each node has 512GB of memory and 3.84TB of NVMe storage. The cluster is equipped with two network connections: an InfiniBand capable of transmitting at 200Gbps and a ConnectX-6 Ethernet for system control utilities.
+
+The Azure cluster consists of up to 10 HB44rs instances. Each instance provides two Intel Xeon Platinum 8168 CPUs and has 352GB of memory. It should be noted that although the Intel CPU consists of 24 cores in a socket, the Azure platform only provide 22 virtual CPU cores. The cluster is connected using Mellanox EDR InfiniBand with a speed of 100Gbps in a fat tree topology.
+
+\subsection{Software Configuration}
+Table~\ref{table:software} lists the software installed on both the local cluster and cloud instances. We used the DaCe version released on September 26, 2022, with the commit SHA \texttt{82314d8} from the GitHub repository. The benchmarks we selected are downloaded from the NPBench GitHub repository. In our experiments, we employed the Intel oneAPI Math Kernel Library (MKL) for improved performance with NumPy, as also mentioned in the original work~\cite{dace2021}.
+\begin{table}[t]
+    \centering
+    \caption{The software stack configuration of our environments}
+    \begin{tabular}{ll}
+        \toprule
+        OS \& Libraries  & Version                   \\
+        \midrule
+        Operating system & Ubuntu 20.04              \\
+        C Compiler \& MPI & Intel oneAPI 2022.3.0   \\
+        Intel ICC Compiler & 20220726       \\
+        GPU Compiler     & CUDA 11.3 \& gcc 9.4  \\
+        DaCe             & Commit with SHA 82314d8   \\
+        NPBench          & Commit with SHA 6fcd180   \\
+        \bottomrule
+    \end{tabular}
+    \label{table:software}
+\end{table}

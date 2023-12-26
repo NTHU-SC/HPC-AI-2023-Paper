@@ -1,0 +1,13 @@
+\section{Description of Experimental Run}
+\label{sec:exp-run}
+
+The benchmark applications used in our experiments were downloaded from the NPBench repository on GitHub. We evaluated all benchmarks using the "paper" dataset. For certain benchmarks (e.g., \texttt{syrk}), we made modifications to improve performance by annotating loops with \texttt{dace.map} to eliminate data dependencies across iterations. Please note that due to the potential bugs within DaCe, some benchmarks could not be compiled with NVCC when using the GPU as the backend. 
+
+To achieve better performance, we switched the C compiler from GCC to Intel ICC (included in oneAPI). Additionally, we analyzed the performance of AMD CPUs on our GPU node. However, the Intel CPUs on Azure consistently outperformed the AMD CPUs for the CPU benchmarks. Despite leveraging the AMD compiler (AOCC) and optimizing libraries (AOCL), the Intel CPUs demonstrated superior performance. Therefore, we only conducted GPU experiments on our GPU cluster.
+
+The methods used to employ DaCe, as presented in NPBench, are as follows:
+\begin{enumerate}
+    \item Variables representing loop sizes (e.g., \texttt{dace.map}) and arrays should be converted to DaCe symbols using \texttt{dace.symbol}.
+    \item Functions optimized by DaCe should be decorated with \texttt{@dace.program}.
+    \item To parallelize loops in an OpenMP-style manner, the Python \texttt{range()} function should be replaced with the \texttt{dace.map} construct.
+\end{enumerate}
