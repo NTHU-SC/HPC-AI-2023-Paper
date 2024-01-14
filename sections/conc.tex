@@ -1,10 +1,4 @@
 \section{Conclusion}
+
 \label{sec:conc}
-In this work, our reproducibility experiments on a single CPU node, a single GPU, and a multi-node distributed setup confirm the effectiveness of DaCe in enhancing application performance. 
-We observed consistent improvements compared to the numpy library across various benchmarks. Additionally, we provided valuable insights into optimizing DaCe's performance.
 
-By analyzing the experiments, we discovered important factors that impact DaCe's performance. Firstly, we found that excessive use of OpenMP threads for atomic operations in CPU benchmarks can lead to significant performance degradation. By determining the optimal number of OpenMP threads, we were able to mitigate this issue and improve overall performance. Secondly, we emphasized the critical role of identifying data dependencies. By annotating critical loops, we observed substantial speedup in certain benchmarks. Finally, in GPU computations, we highlighted the potential bottleneck of communication and synchronization between the CPU and GPU, especially in cases where benchmarks are not highly parallel or involve numerous scalar operations.
-
-It is worth noting that the artifacts provided in \cite{dace2021} make it possible for others to conduct experiments on different architectures. However, one ongoing challenge in employing DaCe is deploying applications onto GPUs, as some benchmarks couldn't be successfully executed on the GPU. Further development to fully support GPUs would advance the maturity of the DaCe framework as an HPC library.
-
-Overall, our reproducibility efforts not only validated the findings of the original work but also provided additional insights for optimizing DaCe's performance. These findings are valuable for researchers and practitioners seeking to leverage DaCe for high-performance computing, enabling them to make informed decisions and achieve better performance in their applications. 
