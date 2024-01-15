@@ -1,8 +1,22 @@
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{T}he 2023 High-Performance Computing and Artificial Intelligence (HPC-AI) Asia-Pacific Competition was organized by the HPC-AI Advisory Council and the National Supercomputing Centre (NSCC) of Singapore. The competition attracted 22 outstanding teams from 11 countries and regions. The competition spanned from May 19 to November 16, 2023. The HPCAI competition for this year announced two distinct challenges: the Climate Prediction Model MPAS and the Large Language Model Bloom. The first challenge, MPAS, is restricted to be completed using only CPUs, while the second challenge, Bloom, is constrained to utilize GPUs. The combination of scientific computing with AI challenges aligns well with the spirit of HPCAI.
+\IEEEPARstart{T}he 2023 High-Performance Computing and Artificial Intelligence (HPC-AI) Asia-Pacific Competition was organized by the HPC-AI Advisory Council and the National Supercomputing Centre (NSCC) of Singapore. The competition attracted 22 outstanding teams from 11 countries and regions. The competition spanned from May 19 to November 16, 2023. The HPCAI competition for this year announced two distinct challenges: the Climate Prediction Model MPAS~\cite{mpas} and the Large Language Model Bloom~\cite{Bloom-model}. The first challenge, MPAS, is restricted to be run on CPUs, while the second challenge, Bloom, is restricted to be run on GPUs. The combination of scientific computing with AI challenges aligns well with the spirit of HPCAI for developing young talents with interdisciplinary skills.
 
-Our goal in this competition was straightforward - to accelerate as much as possible. While, since code modification was not allowed in this competition, initially, we faced challenges in achieving performance improvements. Consequently, we directed our efforts towards developing an optimized application and creating an environment with optimized libraries.
+The goal of this competition is to accelerate the applications for the given performance objectives. The primary performance objective of MPAS is to enhance simulation speed, while Bloom focuses on minimizing the generation time per token. Code modification is not allowed in the competition, so we have to achieve performance optimization by the means of finding the best resource allocation, system environment setting, acceleration library, and application configuration, etc. The performance results have to be collected from the two supercomputers provided by the competition: GADI~\cite{gadi} at the
+National Computational Infrastructure(NCI) in Australia, and ASPIRE-2A~\cite{aspire-2a} at the National Supercomputing Centre
+(NSCC) in Singapore. But in order to perform more in-depth performance studies and collect more experimental results, we also conducted experiments on two supercomputers in Taiwan, naming Taiwania-2~\cite{taiwania} and Taiwania-3~\cite{taiwania}. By comparing the results from different supercomputer systems, we can also have more understanding on how the hardware specifications and system environments could affect the performance improvement of different optimization techniques. 
 
-In terms of the final results, although we didn't see significant improvements in performance, we tried various optimization methods. This paper will outline all the approaches we attempted, the challenges we faced, and our observations and solutions for overcoming difficulties.
+In conclusion, after series of performance tuning and optimization, we achieved  a performance speedup of 1.34 times for MPAS and 11.4 times for Bloom. We also found the following performance optimization insights from our studies:
+\begin{itemize}
+    \item Software Environment Configuration: The software environment configuration encompasses the selection of versions and the building configuration of the compilers, libraries and applications themselves.
+    \item Leveraging Shared Memory: Maximizing Shared Memory Utilization for Direct Inference Acceleration.
+    \item Load Balancing Optimization: Achieving Effective Workload Distribution through Load Balancing.
+\end{itemize}
+
+
+The rest of the paper is structured as follows. Section~\ref{sec:setup} describes the system environments and hardware specifications of the supercomputers used in our study. Section~\ref{sec:app} introduces the applications and performance objectives for our optimization. Section~\ref{sec:MPAS} and Section~\ref{sec:BLOOM} are the result in which we achieved.
+
+%While, since code modification was not allowed in this competition, initially, we faced challenges in achieving performance improvements. Consequently, we directed our efforts towards developing an optimized application and creating an environment with optimized libraries.
+
+%In terms of the final results, although we didn't see significant improvements in performance, we tried various optimization methods. This paper will outline all the approaches we attempted, the challenges we faced, and our observations and solutions for overcoming difficulties.

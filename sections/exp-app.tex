@@ -1,10 +1,13 @@
 \section{Description Of Applications}
-\label{sec:conc}
+\label{sec:app}
 
-We briefly explained some limitation and introduction of the tasks here. MPAS-Atmosphere is limited to use CPU to run the application, and the Bloom inference tasks is limited to run by GPU, moreover, MPAS-Atmosphere has to be ran on 32 nodes with 48 CPU core per node, and the Bloom inference should be done on 2 nodes with 4 GPU per node.
+This section briefly introduces the applications designated by the competition, and the corresponding rules for running them during the competition.
+
+%We briefly explained some limitation and introduction of the tasks here. MPAS-Atmosphere is limited to use CPU to run the application, and the Bloom inference tasks is limited to run by GPU, moreover, MPAS-Atmosphere has to be ran on 32 nodes with 48 CPU core per node, and the Bloom inference should be done on 2 nodes with 4 GPU per node.
 
 \subsection{MPAS-Atmosphere}
-MPAS-Atmosphere is a climate model designed to simulate and study the behavior of the Earth's atmosphere, and it is based on unstructured centroidal Voronoi (hexagonal) meshes using C-grid staggering and selective grid refinement. This unstructured voronoi grid is good for scaling on parallel computers. The task is to run the 10km benchmark provided from MPAS with config dt (per step size) set to 60 and config run duration set to 16 minutes.
+
+For the competition, we were asked to run the atmospheric component of MPAS, which is a climate model designed to simulate and study the behavior of the Earth's atmosphere. The simulation is based on unstructured centroidal Voronoi (hexagonal) meshes using C-grid staggering and selective grid refinement. This unstructured voronoi grid is good for scaling on parallel computers. The task is to run the 10km benchmark provided from MPAS with \texttt{config\_dt} (per step size) set to 60 and \texttt{config\_run\_duration} set to 16 minutes. The computing task in the competition is to run the application on 32 nodes with 48 CPUs core per node, and versions of MPAS we used is 7.3 and 8.0.1.
 
 \subsection{Bloom}
-BLOOM, a multilingual language model with 176 billion parameters, making it one of the world's largest open multilingual language model. It has the capability to generate text in 46 natural languages and 13 programming languages.The task is to run an int8 model type with deepspeed inference scripts to optimize throughput performance,aiming for the lowest throughput per token, including tokenization time (measured in milliseconds).
+The other application designated by the competition is BLOOM, which is a multilingual language model with 176 billion parameters, making it one of the world's largest open multilingual language model. It has the capability to generate text in 46 natural languages and 13 programming languages.The task is to run an int8 model type with deepspeed inference scripts to optimize throughput performance,aiming for the lowest throughput per token, including tokenization time (measured in milliseconds). The computing task in the competition is to run the Bloom inference requests on 2 nodes with 4 GPUs per node and BLOOM-176B model is downloaded from huggingface hub.

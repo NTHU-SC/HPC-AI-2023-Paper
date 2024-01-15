@@ -1,38 +1,52 @@
-\section{Experimental Setup}
-\label{sec:exp-setup}
+\section{Experiment Environment}
+\label{sec:setup}
 
-\subsection{Hardware configuration}
-Our testing environment comprises the GADI system at the National Computational Infrastructure(NCI) in Singapore, the ASPIRE 2A system  at  the National Supercomputing Centre (NSCC) in Singapore and the Taiwania 3 system at the National Center for High-performance Computing (NCHC) in Taiwan . In the context of the MPAS-Atmosphere application, we utilized the normal queue on GADI and Taiwania 3. Additionally, on the other hand, for Bloom application, we employed the gpuvolta queue on GADI and Taiwania 2, while opting for the normal queue on the ASPIRE 2A system.
+We use four supercomputers as the computing environments for our performance study, naming the GADI system at the National Computational Infrastructure(NCI) in Australia, the ASPIRE-2A system at the National Supercomputing Centre (NSCC) in Singapore, and the Taiwania-2 and Taiwania-3 systems at the National Center for High-performance Computing (NCHC) in Taiwan. GADI and ASPIRE-2A are the designated supercomputers for the competition. Taiwania-2 and Taiwania-3 are the additional supercomputers we used for conducting more experiment runs and collecting more in-depth performance measurement results for tuning and analysis.  
+
+%The hardware specifications and software configurations for all four systems are detailed below.
+
+%\subsection{Hardware specification}
+
+Table~\ref{table:hardware} summarizes the hardware specifications of the computing systems. It is clear that ASPIRE-2A has the strongest computing power equipped with 4 A100 GPUs and 64 cores per node. On the other hand, GADI has the highest interconnect network bandwidth at 200 Gb/s, while the other systems only have 100 GB/s network bandwidth. Taiwania-2 has a old CPU mode, but it has the most number of GPUs per node at 8. Taiwania-3 has no GPU, so we can only run MPAS on it, while Bloom was run on GADI, ASPIRE-2A and Taiwania-3. By conducting experiments across multiple systems, we are able to verify our experiment results in different computing environments, and observe the performance impact from hardware specifications and resource configurations. 
+
+
+%Our testing environment comprises the GADI system at the National Computational Infrastructure(NCI) in Australia, the ASPIRE 2A system  at  the National Supercomputing Centre (NSCC) in Singapore and the Taiwania 3 system at the National Center for High-performance Computing (NCHC) in Taiwan . In the context of the MPAS-Atmosphere application, we utilized the normal queue on GADI and Taiwania 3. Additionally, on the other hand, for Bloom application, we employed the gpuvolta queue on GADI and Taiwania 2, while opting for the normal queue on the ASPIRE 2A system.
 
 \begin{table*}[t]
     \centering
-    \caption{The cluster hardware configuration}
+    \caption{The hardware configuration of the supercomputers used in our performance study.}
     \begin{tabular}{l|llll}
         \toprule
-        Type & GADI & Taiwania 3  & Taiwania 2 & ASPIRE 2A\\
+        Type & GADI & ASPIRE-2A  & Taiwania-2 & Taiwania-3\\
         \midrule
-        CPU model & Intel Xeon Platinum 8274 & Intel Xeon Platinum 8280 & Intel Xeon Gold 6154 & CPU AMD EPYC 7713\\
-        CPU micro architecture & Cascade Lake & Cascade Lake & Skylake & Millan \\
-        CPU frequency & 3.2 GHz & 2.4 GHz & 3.0 GHz & 2 GHz\\
-        Cores per CPU & 24 & 28 & 18 & 32\\
+        CPU model & Intel Xeon Platinum 8274 & CPU AMD EPYC 7713  & Intel Xeon Gold 6154 & Intel Xeon Platinum 8280\\
+        CPU architecture & Cascade Lake & Millan & Skylake &  Cascade Lake \\
+        CPU frequency & 3.2 GHz & 2 GHz & 3.0 GHz & 2.4 GHz\\
+        Cores per CPU & 24 & 32 & 18 & 28\\
         Numbers of CPU per node & 2 & 2 & 2 & 2\\
-        RAM per node & 192GB & 192GB & 192GB &  512 GB   \\
-        GPUs per node &  4 $\times$ NVIDIA V100 & Not Available & 8 $\times$ NVIDIA V100 & 4 $\times$ NVIDIA A100 \\
-        Infiniband    & 200 Gb/s & 100 Gb/s & 100 Gb/s  \\
+        RAM per node & 192GB & 512 GB & 192GB &  192GB   \\
+        GPUs per node &  4 $\times$ NVIDIA V100 & 4 $\times$ NVIDIA A100 & 8 $\times$ NVIDIA V100 & Not Available  \\
+        Network    & 200 Gb/s & 100 Gb/s & 100 Gb/s  & 100 Gb/s\\
+        \midrule
+        Operating System & Rocky Linux & RHEL8 & CentOS & CentOS \\
+        Tested Application & Bloom, MPAS & Bloom & Bloom & MPAS \\
         \bottomrule
     \end{tabular}
     \label{table:hardware}
 \end{table*}
 
-Table~\ref{table:hardware} summarizes some detailed hardware configurations. Our final result for MPAS-A consists of 32 CPU nodes with 48 CPU cores on each nodes, for Bloom inference, we utilized a total of 8 V100 GPUs distributed across two nodes on both GADI and Taiwania 2. Additionally,8 A100 GPUs were employed on two nodes on NSCC. . 
+%Table~\ref{table:hardware} summarizes some detailed hardware configurations. Our final result for MPAS-A consists of 32 CPU nodes with 48 CPU cores on each nodes, for Bloom inference, we utilized a total of 8 V100 GPUs distributed across two nodes on both GADI and Taiwania 2. Additionally,8 A100 GPUs were employed on two nodes on NSCC. . 
 
 
-\subsection{Software Configuration}
-Table~\ref{table:software-CPU} lists the software installed on both the GADI and Taiwania 3 cluster, which is mainly used for MPAS-A application, moreover, we have Rocky Linux as operating system on GADI and CentOS on Taiwania 3.
+%\subsection{Software Configuration}
+For the system environment, we installed the same software on different supercomputers for each application. According to the competition rule, we are allowed to select for the choice of MPAS version among the four available versions 5, 6, 7, and 8. We opted for the seventh and eighth version, which stand out as the latest version and most stable iteration matches the benchmark data among the four, and we could choose the version of supporting libraries and compilers for optimizing the application performance as well. On the other hand, there are three versions of the Bloom models. The first is the original BLOOM-176B model trained by Bigscience. Then, there are two models quantized by the Microsoft research team: bloom-deepspeed-inference-int8 and bloom-deepspeed-inference-fp16. Ultimately, we decided to use bloom-deepspeed-inference-int8 over the others because it offers the best combination of performance and feasibility on the Gadi supercomputer.
 
-\begin{table}[ht]
+
+Table~\ref{table:software-CPU} and Table~\ref{table:software-GPU} lists the required software installed for achieving the best performance for MPAS and Bloom, respectively. But, we also installed other versions of compilers, MPI libraries and acceleration packages for performance comparison. 
+
+\begin{table}[t]
     \centering
-    \caption{The cluster software configuration for MPAS-A}
+    \caption{The software installed for MPAS.}
     \begin{tabular}{ll}
         \toprule
         Libraries & Versions  \\
@@ -50,11 +64,11 @@ Table~\ref{table:software-CPU} lists the software installed on both the GADI and
     \label{table:software-CPU}
 \end{table}
 
-Table~\ref{table:software-GPU} lists the software required from Bloom and installed on both the GADI ,Aspire2A and Taiwania 2 cluster. Furthermore, ASPIRE 2A use Red Hat Enterprise Linux 8 (RHEL) as operating system and Taiwania 2 use CentOS as operating system.
+%Table~\ref{table:software-GPU} lists the software required from Bloom and installed on both the GADI ,Aspire2A and Taiwania 2 cluster. Furthermore, ASPIRE 2A use Red Hat Enterprise Linux 8 (RHEL) as operating system and Taiwania 2 use CentOS as operating system.
 
-\begin{table}[ht]
+\begin{table}[th]
     \centering
-    \caption{The cluster software configuration for Bloom}
+    \caption{The software installed for Bloom.}
     \begin{tabular}{ll}
         \toprule
         Libraries & Versions  \\
