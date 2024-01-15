@@ -1,13 +1,13 @@
 \pgfplotsset{compat=1.17}
 
 \section{MPAS-Atmosphere Result}
-In this section, we present a subset of our successful optimization strategies and achievements. We will explore the foundational layer of software installation and its dynamic performance optimizations.
+In this section, we present our successful optimization strategies and achievements. We explore the foundational layer of software installation and its dynamic performance optimizations.
 
 In our study, a key metric for evaluation is the simulation speed, a parameter dedicated to scoring. We focus our optimization efforts on enhancing this simulation speed and present the outcomes accordingly. \\
 
 \[\text{Simulation Speed} = \frac{\text{Computing Time}}{\text{Simulation Time Integration}}\]
 
-The computing time represents the duration MPAS spends in simulation, excluding the time for data preparation tasks such as partitioning or I/O. The simulation time integration refers to the actual time span simulated, which can be configured using \texttt{config\_run\_duration}. In this competition, it is set to 4 minutes for the 8-node testcase, 8 minutes for the 16-node testcase, and 16 minutes for the 32-node testcase.
+The computing time represents the duration MPAS spends in simulation, excluding the time for data preparation tasks such as partitioning or I/O. The simulation time integration refers to the actual time span simulated which can be configured using \texttt{config\_run\_duration}. In this competition, it is set to 4 minutes for the 8-node testcase, 8 minutes for the 16-node testcase, and 16 minutes for the 32-node testcase.
 
 \label{sec:MPAS}
 
@@ -89,13 +89,13 @@ The computing time represents the duration MPAS spends in simulation, excluding 
 \label{fig:compare-compiler}
 \end{figure}
 
-\subsection{Foundational Layer Of Software Installation}
+\subsection{Software Installation \& Configuration}
 \subsubsection{C and MPI Compiler selection}
-For our first approach, we've tested out different C and MPI compiler combination. The result shows ICC 2021.10.0 with OpenMPI 4.1.5 is the best suite for MPAS, which outperformed other combination when running MPAS on the 32 nodes. Additionally, performance testing was also conducted on the Taiwania 3. Fig.~\ref{fig:compare-compiler} illustrates a performance comparison between the two clusters. The network speed difference in Table.~\ref{table:hardware} is the main reason Gadi faster than Taiwania 3.
+For our first approach, we've tested out different C and MPI compiler combination. The result shows that ICC 2021.10.0 with OpenMPI 4.1.5 is the best suite for MPAS, which outperformed other combinations when running MPAS on the 32 nodes. Additionally, performance testing was also conducted on the Taiwania 3. Fig.~\ref{fig:compare-compiler} illustrates a performance comparison between the two clusters. The network speed difference shown in Table.~\ref{table:hardware} is the main reason Gadi faster than Taiwania 3.
 
 \subsubsection{OpenMPI and UCX Configuration}
 
-we focused on optimizing both UCX (Unified Communication X)~\cite{ucx} and OpenMPI to enhance performance. UCX exposes a set of abstract communication primitives that utilize the best of available hardware resources and offloads. MPI libraries adopt UCX as their underlying communication protocol.
+Next, we focused on optimizing both UCX (Unified Communication X)~\cite{ucx} and OpenMPI to enhance performance. UCX exposes a set of abstract communication primitives that utilize the best of available hardware resources and offloads. MPI libraries adopt UCX as their underlying communication protocol.
 
 For UCX optimization, we deactivated all debugging flags to improve performance, and enhanced it further by enabling UD (Unreliable Datagram) and RC (Reliable Connection) support. We also integrated KNEM for shared memory-based, high-performance intra-node MPI communication.
 
@@ -105,7 +105,7 @@ For OpenMPI 4.1.5 optimization, we enable HCOLL~\cite{hcoll} for optimized colle
 
 \subsubsection{Compile Time Flag}
 
-We utilize the \texttt{-march} flag for CPU-specific optimizations and the \texttt{-ax} flag to create code versions for multiple architectures during compilation. Consequently, these two flags gave us some benefits on the overall integration time by 4 seconds lesser, which is almost a 10\% performance improvement. 
+We utilize the \texttt{-march} flag for CPU-specific optimizations and the \texttt{-ax} flag to create code versions for multiple architectures during compilation. Consequently, these two flags gave reduce the overall integration time by 4 seconds which is about 10\% performance improvement. 
 
 
 \subsection{Dynamic Performance Optimizations}
@@ -148,7 +148,7 @@ We utilize the \texttt{-march} flag for CPU-specific optimizations and the \text
 % We can see that when the configurations on these two parameters matches the nodes we used and the hardware threads on each machine, MPAS performs slightly better cause they matches the number of nodes and hardware threads performing I/O operations. We've gained about 0.3\% of performance increase from here.
 
 \subsubsection{Graph Load-Balancing}
-Fig.~\ref{figure:profile-before} is our profiling result from IPM, in this figure we found that the load-balancing didn't seem well on MPAS. It can be cause by the way Metis partition the mesh and it should be able to resolve by giving Metis~\cite{metis} different setup. 
+Fig.~\ref{figure:profile-before} is our profiling result from IPM, in this figure we found that the load-balancing didn't seem well on MPAS. It can be cause by the way Metis~\cite{metis} partition the mesh. 
 
 \begin{figure}[t]
     \centering
@@ -157,7 +157,7 @@ Fig.~\ref{figure:profile-before} is our profiling result from IPM, in this figur
     \label{figure:profile-before}
 \end{figure}
 
-After research, we change the load balancing tolerance in Metis. Moreover, selecting \texttt{objtype} (the mesh optimization mode) from optimization for edge cuts to optimization for communication.
+After researching, we change the load balancing tolerance in Metis and select \texttt{objtype} (the mesh optimization mode) to minimize edge cuts and communication time.
 
 \begin{table}[t]
     \centering
@@ -175,7 +175,7 @@ After research, we change the load balancing tolerance in Metis. Moreover, selec
     \label{table:metis-configuration}
 \end{table}
 
-After all, the balancing issue has improved a little bit, in Fig.~\ref{figure:profile-after} the peak has dropped from 1.6 to 1.4 with a similar lower bound. We believe this issue may impact more in some longer or larger simulations.
+After all, the balancing issue was improved. As shown in Fig.~\ref{figure:profile-after}, the peak has dropped from 1.6 to 1.4 with a similar lower bound. We believe the load balancing issue may have even larger impact in some longer or larger simulations.
 
 \begin{figure}[t]
     \centering
@@ -185,9 +185,9 @@ After all, the balancing issue has improved a little bit, in Fig.~\ref{figure:pr
 \end{figure}
 
 \subsubsection{I/O optimization}
-Due to the longer integration step occurring every simulated 10 minutes, we suspect that there may have I/O operations causing delays. Thus, we've tried different I/O optimization attempts to solve this issue. A simple attempt is set some ROMIO~\cite{ROMIO} environment variables to boost up the I/O. By setting \texttt{romio\_cb\_read} or \texttt{romio\_cb\_write}, we can enable or disable to let the program select the activation of the collecting buffering. This configuration resulted in an approximated 50\% reduction in I/O time.
+Due to the longer integration step occurring every simulated 10 minutes, we suspect that there may have I/O operations causing delays. Thus, we've tried different I/O optimization attempts to solve this issue. One of the most effective method is to set the  ROMIO~\cite{ROMIO} environment variables to \texttt{romio\_cb\_read} or \texttt{romio\_cb\_write}, which let us enable or disable the usage of collecting buffering. This configuration resulted in an approximated 50\% reduction in I/O time.
 
-\subsection{Final results on Gadi and Taiwania3}
+\subsection{Final results on Gadi and Taiwania 3}
 After all the approaches were done, the best results is show in Fig.~\ref{fig:speed_comparison_nodes} with a baseline.
 
 \begin{figure}[t]

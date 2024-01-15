@@ -12,13 +12,14 @@ To minimize the metric value for the BLOOM inference process, we can enhance the
 
 
 \subsection{Batch size}
-Our first strategy is increasing the total token inlet. By using Pytorch deep learning framework, we can easily transfer data from hosts to devices in pursue of better parallel ability.
+Our first strategy is to increase the total token inlet. By using Pytorch deep learning framework, we can easily transfer data from hosts to devices in pursue of better parallel ability.
 
-Table IV lists all sentences that will be fed as the input tokens.We found that the sentences will be duplicated several times in the list until the content in the list exceeds the batch\_size. Then, we will extract the first batch\_size sentences and feed them into the language model.
+Table~\ref{table:bloom-input} lists all sentences that will be fed as the input tokens. We found that the sentences will be duplicated several times in the list until the content in the list exceeds the batch\_size. Then, we will extract the first batch\_size sentences and feed them into the language model.
 
 \begin{table}[t]
     \centering
     \caption{The input sentences for BLOOM inference}
+    \label{table:bloom-input}
     \begin{tabular}{ll}
         \toprule
         Input\_sentences  \\
@@ -32,10 +33,9 @@ Table IV lists all sentences that will be fed as the input tokens.We found that 
         "Peace is the only way" \\
         \bottomrule
     \end{tabular}
-    \label{table:bloom-input}
 \end{table}
 
-By experiments, we have found that the metric value decreases as we increasing the batch\_size as shown in Fig. 4.
+By experiments, we have found that the metric value decreases as we increasing the batch\_size as shown in Fig.~\ref{fig:exp_bloom_batch}.
 
 \begin{figure}
 \centering
@@ -82,6 +82,7 @@ By experiments, we have found that the metric value decreases as we increasing t
 \end{axis}
 \end{tikzpicture}
 \caption{Generation time per token to batch size in two ASPIRE-2A A100x4 nodes}
+\label{fig:exp_bloom_batch}
 \end{figure}
 
 
@@ -106,7 +107,7 @@ This variable control the size of buffer used by NCCL when communicating between
 
 
 \subsection{Comparison between Gadi and Taiwania2}
-As depicted in Fig. 5., despite of the batch size, Gadi consistently outperforms Taiwania 2. The speedup achieved on Gadi is more than 2 times faster.
+As depicted in Fig.~\ref{fig:exp_gadi_tw2}., despite of the batch size, Gadi consistently outperforms Taiwania 2. The speedup achieved on Gadi is more than 2 times faster.
 
 We conducted Nsight System profiling, and observed that during the inference process, a significant portion of GPU kernel usage is dedicated to the ncclKernel allreduce operation, which is responsible for combining results. This highlights the communication demands between GPUs when employing Tensor Parallelism.
 
@@ -155,6 +156,7 @@ This insight highlights the importance of communication in large model inference
 \end{axis}
 \end{tikzpicture}
 \caption{Comparison of generation time per token for Gadi and Taiwania 2 across different batch sizes.}
+\label{fig:exp_gadi_tw2}
 \end{figure}
 
 
