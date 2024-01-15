@@ -1,10 +1,12 @@
 \section{Conclusion}
+This paper has detailed our participation in the 2023 High-Performance Computing and Artificial Intelligence (HPC-AI) Asia-Pacific Competition, a challenging and enriching experience that tested our skills and knowledge in the realms of high-performance computing and AI. Our team's efforts were focused on two main challenges: optimizing the Climate Prediction Model MPAS to enhance simulation speed on CPUs, and accelerating the Large Language Model Bloom to minimize generation time per token on GPUs.
+
+Our experiments, conducted on four different supercomputer systems, including GADI in Australia and ASPIRE-2A in Singapore, as well as Taiwania-2 and Taiwania-3 in Taiwan, allowed us to gather comprehensive data and compare results across different platforms.
+
+In MPAS, we achieved a speedup of 1.34 times. Given the constraint of being unable to modify the source code, we optimized all aspects of the software environment and load balancing. While the numerical reduction in simulation time may not be a lot, we believe that these configurations will yield more substantial benefits when applied to simulations with larger time scales.
+
+On the other hand, we significantly improved the performance of the quantized bloom-deepspeed-inference-int8 model, making its inference process 11.4 times faster than the original model's batch inference on the Gadi supercomputer. We observed that the primary bottleneck is the limited GPU RAM. As we are unable to alter the model or the inference framework, we believe that using A100 GPUs and finding better methods to achieve higher parallelism will help us overcome more challenges.
+
+Finally, our participation in the 2023 HPC-AI competition has been a profound learning experience, providing us with the opportunity to apply our skills in a real-world context.
 \label{sec:conc}
-In this work, our reproducibility experiments on a single CPU node, a single GPU, and a multi-node distributed setup confirm the effectiveness of DaCe in enhancing application performance. 
-We observed consistent improvements compared to the numpy library across various benchmarks. Additionally, we provided valuable insights into optimizing DaCe's performance.
 
-By analyzing the experiments, we discovered important factors that impact DaCe's performance. Firstly, we found that excessive use of OpenMP threads for atomic operations in CPU benchmarks can lead to significant performance degradation. By determining the optimal number of OpenMP threads, we were able to mitigate this issue and improve overall performance. Secondly, we emphasized the critical role of identifying data dependencies. By annotating critical loops, we observed substantial speedup in certain benchmarks. Finally, in GPU computations, we highlighted the potential bottleneck of communication and synchronization between the CPU and GPU, especially in cases where benchmarks are not highly parallel or involve numerous scalar operations.
-
-It is worth noting that the artifacts provided in \cite{dace2021} make it possible for others to conduct experiments on different architectures. However, one ongoing challenge in employing DaCe is deploying applications onto GPUs, as some benchmarks couldn't be successfully executed on the GPU. Further development to fully support GPUs would advance the maturity of the DaCe framework as an HPC library.
-
-Overall, our reproducibility efforts not only validated the findings of the original work but also provided additional insights for optimizing DaCe's performance. These findings are valuable for researchers and practitioners seeking to leverage DaCe for high-performance computing, enabling them to make informed decisions and achieve better performance in their applications. 

@@ -1,58 +1,95 @@
-\section{Experimental Setup}
-\label{sec:exp-setup}
+\section{Experiment Environment}
+\label{sec:setup}
 
-\subsection{Hardware configuration}
-\begin{table}[t]
+We use four supercomputers as the computing environments for our performance study, naming the GADI system at the National Computational Infrastructure(NCI) in Australia, the ASPIRE-2A system at the National Supercomputing Centre (NSCC) in Singapore, and the Taiwania-2 and Taiwania-3 systems at the National Center for High-performance Computing (NCHC) in Taiwan. GADI and ASPIRE-2A are the designated supercomputers for the competition. Taiwania-2 and Taiwania-3 are the additional supercomputers we used for conducting more experiment runs and collecting more in-depth performance measurement results for tuning and analysis.  
+
+%The hardware specifications and software configurations for all four systems are detailed below.
+
+%\subsection{Hardware specification}
+
+Table~\ref{table:hardware} summarizes the hardware specifications of the computing systems. It is clear that ASPIRE-2A has the strongest computing power equipped with 4 A100 GPUs and 64 cores per node. On the other hand, GADI has the highest interconnect network bandwidth at 200 Gb/s, while the other systems only have 100 GB/s network bandwidth. Taiwania-2 has a old CPU mode, but it has the most number of GPUs per node at 8. Taiwania-3 has no GPU, so we can only run MPAS on it, while Bloom was run on GADI, ASPIRE-2A and Taiwania-3. By conducting experiments across multiple systems, we are able to verify our experiment results in different computing environments, and observe the performance impact from hardware specifications and resource configurations. 
+
+
+%Our testing environment comprises the GADI system at the National Computational Infrastructure(NCI) in Australia, the ASPIRE 2A system  at  the National Supercomputing Centre (NSCC) in Singapore and the Taiwania 3 system at the National Center for High-performance Computing (NCHC) in Taiwan . In the context of the MPAS-Atmosphere application, we utilized the normal queue on GADI and Taiwania 3. Additionally, on the other hand, for Bloom application, we employed the gpuvolta queue on GADI and Taiwania 2, while opting for the normal queue on the ASPIRE 2A system.
+
+\begin{table*}[t]
     \centering
-    \caption{The hardware configuration of our testbed}
-    \begin{adjustbox}{width=248pt}
-    \begin{tabular}{l|lll}
-    \toprule
-    Type                      &  Our GPU cluster        & Azure Cloud HC           \\
-    \midrule
-    Number of nodes          & 2                        & 8                       \\
-    CPU model                 & AMC EPYC 7763           & Intel Xeon Platinum 8168 \\
-    CPU architecture          & Milan                  & Skylake                  \\
-    CPU frequency             & 2.45GHz                 & 3.4 GHz                  \\
-    Cores per CPU             & 64                      & 22                       \\
-    Number of CPU per node    & 2                       & 2                        \\
-    L1d/i cache per core      & 32 KiB                  & 32 KiB                   \\
-    L2 cache per core         & 512KiB                  & 1 MiB                    \\
-    L3 cache              & 256 MiB                & 33 MiB                   \\
-    GPU model                 & NVIDIA A100*4           & -                        \\
-    Interconnection bandwidth & 200 Gb/s                & 100 Gb/s                 \\
-    \midrule
-    Operating system environment & Bare-metal & Virtual machine\\
-    \midrule
-    Experiments performed     & GPU                     & CPU and distributed \\
-    \bottomrule
-    \end{tabular}
-    \end{adjustbox}
-    \label{table:hardware}
-\end{table}
-
-Our experimental environment consists of two GPU nodes and a eight-node Azure cluster (HB44rs). Table~\ref{table:hardware} summarizes the hardware configurations used in our experiments.
-
-The GPU cluster comprises two QuantaGrid D43N-3U nodes. Each node is equipped with two AMD EPYC "Milan" 7763 64-core processors, with hyperthreading enabled, resulting in a total of 128 cores per node. Each node has 512GB of memory and 3.84TB of NVMe storage. The cluster is equipped with two network connections: an InfiniBand capable of transmitting at 200Gbps and a ConnectX-6 Ethernet for system control utilities.
-
-The Azure cluster consists of up to 10 HB44rs instances. Each instance provides two Intel Xeon Platinum 8168 CPUs and has 352GB of memory. It should be noted that although the Intel CPU consists of 24 cores in a socket, the Azure platform only provide 22 virtual CPU cores. The cluster is connected using Mellanox EDR InfiniBand with a speed of 100Gbps in a fat tree topology.
-
-\subsection{Software Configuration}
-Table~\ref{table:software} lists the software installed on both the local cluster and cloud instances. We used the DaCe version released on September 26, 2022, with the commit SHA \texttt{82314d8} from the GitHub repository. The benchmarks we selected are downloaded from the NPBench GitHub repository. In our experiments, we employed the Intel oneAPI Math Kernel Library (MKL) for improved performance with NumPy, as also mentioned in the original work~\cite{dace2021}.
-\begin{table}[t]
-    \centering
-    \caption{The software stack configuration of our environments}
-    \begin{tabular}{ll}
+    \caption{The hardware configuration of the supercomputers used in our performance study.}
+    \begin{tabular}{l|llll}
         \toprule
-        OS \& Libraries  & Version                   \\
+        Type & GADI & ASPIRE-2A  & Taiwania-2 & Taiwania-3\\
         \midrule
-        Operating system & Ubuntu 20.04              \\
-        C Compiler \& MPI & Intel oneAPI 2022.3.0   \\
-        Intel ICC Compiler & 20220726       \\
-        GPU Compiler     & CUDA 11.3 \& gcc 9.4  \\
-        DaCe             & Commit with SHA 82314d8   \\
-        NPBench          & Commit with SHA 6fcd180   \\
+        CPU model & Intel Xeon Platinum 8274 & CPU AMD EPYC 7713  & Intel Xeon Gold 6154 & Intel Xeon Platinum 8280\\
+        CPU architecture & Cascade Lake & Millan & Skylake &  Cascade Lake \\
+        CPU frequency & 3.2 GHz & 2 GHz & 3.0 GHz & 2.4 GHz\\
+        Cores per CPU & 24 & 32 & 18 & 28\\
+        Numbers of CPU per node & 2 & 2 & 2 & 2\\
+        RAM per node & 192GB & 512 GB & 192GB &  192GB   \\
+        GPUs per node &  4 $\times$ NVIDIA V100 & 4 $\times$ NVIDIA A100 & 8 $\times$ NVIDIA V100 & Not Available  \\
+        Network    & 200 Gb/s & 100 Gb/s & 100 Gb/s  & 100 Gb/s\\
+        \midrule
+        Operating System & Rocky Linux & RHEL8 & CentOS & CentOS \\
+        Tested Application & Bloom, MPAS & Bloom & Bloom & MPAS \\
         \bottomrule
     \end{tabular}
-    \label{table:software}
+    \label{table:hardware}
+\end{table*}
+
+%Table~\ref{table:hardware} summarizes some detailed hardware configurations. Our final result for MPAS-A consists of 32 CPU nodes with 48 CPU cores on each nodes, for Bloom inference, we utilized a total of 8 V100 GPUs distributed across two nodes on both GADI and Taiwania 2. Additionally,8 A100 GPUs were employed on two nodes on NSCC. . 
+
+
+%\subsection{Software Configuration}
+For the system environment, we installed the same software on different supercomputers for each application. According to the competition rule, we are allowed to select for the choice of MPAS version among the four available versions 5, 6, 7, and 8. We opted for the seventh and eighth version, which stand out as the latest version and most stable iteration matches the benchmark data among the four, and we could choose the version of supporting libraries and compilers for optimizing the application performance as well. On the other hand, there are three versions of the Bloom models. The first is the original BLOOM-176B model trained by Bigscience. Then, there are two models quantized by the Microsoft research team: bloom-deepspeed-inference-int8 and bloom-deepspeed-inference-fp16. Ultimately, we decided to use bloom-deepspeed-inference-int8 over the others because it offers the best combination of performance and feasibility on the Gadi supercomputer.
+
+
+Table~\ref{table:software-CPU} and Table~\ref{table:software-GPU} lists the required software installed for achieving the best performance for MPAS and Bloom, respectively. But, we also installed other versions of compilers, MPI libraries and acceleration packages for performance comparison. 
+
+\begin{table}[t]
+    \centering
+    \caption{The software installed for MPAS.}
+    \begin{tabular}{ll}
+        \toprule
+        Libraries & Versions  \\
+        \midrule
+        C Compiler & ICC 2021.10.0 \\
+        MPI Library & OpenMPI 4.1.5 \\
+        HDF5 & 1.8.18 \\
+        PNETCDF & 1.12.3 \\
+        NETCDF C & 4.8.1 \\
+        NETCDF Fortran & 4.6.1 \\
+        Parallel I/O & 2.5.10 \\
+        Metis & 5.1.0 \\
+        \bottomrule
+    \end{tabular}
+    \label{table:software-CPU}
+\end{table}
+
+%Table~\ref{table:software-GPU} lists the software required from Bloom and installed on both the GADI ,Aspire2A and Taiwania 2 cluster. Furthermore, ASPIRE 2A use Red Hat Enterprise Linux 8 (RHEL) as operating system and Taiwania 2 use CentOS as operating system.
+
+\begin{table}[th]
+    \centering
+    \caption{The software installed for Bloom.}
+    \begin{tabular}{ll}
+        \toprule
+        Libraries & Versions  \\
+        \midrule
+        C Compiler & GCC 10.3.0 \\
+        GPU Compiler & CUDA nvcc 11.6 \\
+        python & 3.8 \\
+        NCCL & 2.18 \\
+        Pytorch & 1.12.1 \\
+        Transformer & 4.26.1 \\
+        Deepspeed & 0.7.6 \\
+        accelerate & 0.16.0  \\
+        gunicorn & 20.1.0 \\
+        uvicorn & 0.19.0 \\
+        jinja2 & 3.1.2 \\
+        pydantic & 1.10.2 \\
+        huggingface hub & 0.12.1 \\
+        grpcio-tools & 1.50.0 \\
+        bitsandbytes & 0.41.1 \\
+
+        \bottomrule
+    \end{tabular}
+    \label{table:software-GPU}
 \end{table}
